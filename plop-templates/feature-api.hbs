@@ -1,0 +1,99 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+
+// Types (move to types file if needed)
+interface {{properCase name}}Item {
+  id: string
+  // Add your data properties here
+}
+
+// API functions
+const {{name}}Api = {
+  getAll: async (): Promise<{{properCase name}}Item[]> => {
+    const response = await fetch('/api/{{dashCase name}}')
+    if (!response.ok) throw new Error('Failed to fetch {{name}} items')
+    return response.json()
+  },
+
+  getById: async (id: string): Promise<{{properCase name}}Item> => {
+    const response = await fetch(`/api/{{dashCase name}}/${id}`)
+    if (!response.ok) throw new Error('Failed to fetch {{name}} item')
+    return response.json()
+  },
+
+  create: async (data: Omit<{{properCase name}}Item, 'id'>): Promise<{{properCase name}}Item> => {
+    const response = await fetch('/api/{{dashCase name}}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) throw new Error('Failed to create {{name}} item')
+    return response.json()
+  },
+
+  update: async (id: string, data: Partial<{{properCase name}}Item>): Promise<{{properCase name}}Item> => {
+    const response = await fetch(`/api/{{dashCase name}}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) throw new Error('Failed to update {{name}} item')
+    return response.json()
+  },
+
+  delete: async (id: string): Promise<void> => {
+    const response = await fetch(`/api/{{dashCase name}}/${id}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) throw new Error('Failed to delete {{name}} item')
+  },
+}
+
+// React Query hooks
+export const use{{properCase name}}List = () => {
+  return useQuery({
+    queryKey: ['{{name}}', 'list'],
+    queryFn: {{name}}Api.getAll,
+  })
+}
+
+export const use{{properCase name}} = (id: string) => {
+  return useQuery({
+    queryKey: ['{{name}}', id],
+    queryFn: () => {{name}}Api.getById(id),
+    enabled: !!id,
+  })
+}
+
+export const useCreate{{properCase name}} = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: {{name}}Api.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['{{name}}'] })
+    },
+  })
+}
+
+export const useUpdate{{properCase name}} = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<{{properCase name}}Item> }) =>
+      {{name}}Api.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['{{name}}'] })
+    },
+  })
+}
+
+export const useDelete{{properCase name}} = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: {{name}}Api.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['{{name}}'] })
+    },
+  })
+}

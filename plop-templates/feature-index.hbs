@@ -1,0 +1,17 @@
+// {{displayName}} Feature Exports
+
+{{#if (includes modules 'pages')}}
+export { {{properCase name}} } from './pages/{{properCase name}}'
+{{/if}}
+
+{{#if (includes modules 'store')}}
+export { use{{properCase name}}Store } from './store/{{name}}Store'
+{{/if}}
+
+{{#if (includes modules 'api')}}
+export * from './api/{{name}}Api'
+{{/if}}
+
+{{#if (includes modules 'types')}}
+export * from './types'
+{{/if}}

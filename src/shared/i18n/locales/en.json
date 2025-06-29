@@ -1,0 +1,31 @@
+{
+  "app": {
+    "title": "React Velocity Starter"
+  },
+  "pages": {
+    "home": {
+      "title": "Welcome to React Velocity Starter",
+      "subtitle": "A modern React TypeScript starter template with best practices",
+      "features": {
+        "title": "Features",
+        "modern": "Modern Tech Stack",
+        "modernDesc": "React 19, TypeScript 5.8+, Vite 6+",
+        "architecture": "Scalable Architecture",
+        "architectureDesc": "Feature-based project structure",
+        "state": "State Management",
+        "stateDesc": "Zustand + TanStack Query",
+        "testing": "Testing Setup",
+        "testingDesc": "Vitest + React Testing Library + Playwright",
+        "ui": "UI Components",
+        "uiDesc": "Tailwind CSS 4 + shadcn/ui",
+        "i18n": "Internationalization",
+        "i18nDesc": "Multi-language support with react-i18next"
+      }
+    },
+    "notFound": {
+      "title": "Page Not Found",
+      "description": "The page you are looking for does not exist or has been moved.",
+      "backHome": "Back to Home"
+    }
+  }
+}

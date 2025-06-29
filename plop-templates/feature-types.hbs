@@ -1,0 +1,23 @@
+// Types for {{displayName}} feature
+
+export interface {{properCase name}}Item {
+  id: string
+  // Add your data properties here
+  createdAt: string
+  updatedAt: string
+}
+
+export interface {{properCase name}}CreateInput {
+  // Add properties for creating new items
+}
+
+export interface {{properCase name}}UpdateInput {
+  // Add properties for updating existing items
+}
+
+export interface {{properCase name}}Filters {
+  // Add filter properties
+  search?: string
+  sortBy?: 'createdAt' | 'updatedAt'
+  sortOrder?: 'asc' | 'desc'
+}

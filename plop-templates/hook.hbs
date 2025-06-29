@@ -1,0 +1,16 @@
+import { useState, useEffect } from 'react'
+
+export function use{{name}}() {
+  // Add your hook logic here
+  const [state, setState] = useState(null)
+
+  useEffect(() => {
+    // Add your effect logic here
+  }, [])
+
+  return {
+    // Return your hook's API here
+    state,
+    setState,
+  }
+}
