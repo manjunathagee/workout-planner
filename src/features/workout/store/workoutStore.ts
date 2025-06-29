@@ -1,64 +1,70 @@
-import { create } from 'zustand';
-import { subscribeWithSelector } from 'zustand/middleware';
-import type { WorkoutPlan, WorkoutSession, Exercise, CompletedExercise, WorkoutStats } from '../types';
-import { dbHelpers } from '@/lib/database';
+import { create } from 'zustand'
+import { subscribeWithSelector } from 'zustand/middleware'
+import type {
+  WorkoutPlan,
+  WorkoutSession,
+  Exercise,
+  CompletedExercise,
+  WorkoutStats,
+} from '../types'
+import { dbHelpers } from '@/lib/database'
 
 interface WorkoutState {
   // Data
-  workoutPlans: WorkoutPlan[];
-  currentSession: WorkoutSession | null;
-  stats: WorkoutStats | null;
-  recentSessions: WorkoutSession[];
-  
+  workoutPlans: WorkoutPlan[]
+  currentSession: WorkoutSession | null
+  stats: WorkoutStats | null
+  recentSessions: WorkoutSession[]
+
   // UI State
-  isLoading: boolean;
-  error: string | null;
-  currentExerciseIndex: number;
-  currentSetIndex: number;
-  isRestMode: boolean;
-  restTimeRemaining: number;
-  
+  isLoading: boolean
+  error: string | null
+  currentExerciseIndex: number
+  currentSetIndex: number
+  isRestMode: boolean
+  restTimeRemaining: number
+
   // Current workout configuration
-  selectedPlan: WorkoutPlan | null;
+  selectedPlan: WorkoutPlan | null
   workoutConfig: {
-    exercise: string;
-    isBodyweight: boolean;
-    weight: number;
-    reps: number;
-    sets: number;
-    restTime: number;
-  };
+    exercise: string
+    isBodyweight: boolean
+    weight: number
+    reps: number
+    sets: number
+    restTime: number
+  }
 }
 
 interface WorkoutActions {
   // Data actions
-  loadWorkoutPlans: () => Promise<void>;
-  loadStats: () => Promise<void>;
-  loadRecentSessions: () => Promise<void>;
-  
+  loadWorkoutPlans: () => Promise<void>
+  loadStats: () => Promise<void>
+  loadRecentSessions: () => Promise<void>
+
   // Workout plan management
-  createWorkoutPlan: (plan: Omit<WorkoutPlan, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
-  updateWorkoutPlan: (id: string, updates: Partial<WorkoutPlan>) => Promise<void>;
-  deleteWorkoutPlan: (id: string) => Promise<void>;
-  
+  createWorkoutPlan: (plan: Omit<WorkoutPlan, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>
+  updateWorkoutPlan: (id: string, updates: Partial<WorkoutPlan>) => Promise<void>
+  deleteWorkoutPlan: (id: string) => Promise<void>
+
   // Workout session management
-  startWorkout: (config: WorkoutState['workoutConfig']) => Promise<void>;
-  completeExercise: (exercise: CompletedExercise) => void;
-  completeSet: () => void;
-  startRest: () => void;
-  skipRest: () => void;
-  extendRest: (seconds: number) => void;
-  finishWorkout: () => Promise<void>;
-  
+  startWorkout: (config: WorkoutState['workoutConfig']) => Promise<void>
+  completeExercise: (exercise: CompletedExercise) => void
+  completeSet: () => void
+  startRest: () => void
+  skipRest: () => void
+  extendRest: (seconds: number) => void
+  finishWorkout: () => Promise<void>
+
   // Configuration
-  updateWorkoutConfig: (config: Partial<WorkoutState['workoutConfig']>) => void;
-  
+  updateWorkoutConfig: (config: Partial<WorkoutState['workoutConfig']>) => void
+
   // UI actions
-  setError: (error: string | null) => void;
-  clearSession: () => void;
-  
+  setError: (error: string | null) => void
+  clearSession: () => void
+
   // Settings
-  clearAllData: () => Promise<void>;
+  clearAllData: () => Promise<void>
 }
 
 const initialWorkoutConfig = {
@@ -67,8 +73,8 @@ const initialWorkoutConfig = {
   weight: 24,
   reps: 10,
   sets: 3,
-  restTime: 60
-};
+  restTime: 60,
+}
 
 export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
   subscribeWithSelector((set, get) => ({
@@ -89,65 +95,65 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
     // Data actions
     loadWorkoutPlans: async () => {
       try {
-        set({ isLoading: true, error: null });
-        const plans = await dbHelpers.getWorkoutPlans();
-        set({ workoutPlans: plans, isLoading: false });
+        set({ isLoading: true, error: null })
+        const plans = await dbHelpers.getWorkoutPlans()
+        set({ workoutPlans: plans, isLoading: false })
       } catch (error) {
-        set({ error: (error as Error).message, isLoading: false });
+        set({ error: (error as Error).message, isLoading: false })
       }
     },
 
     loadStats: async () => {
       try {
-        const stats = await dbHelpers.getStats();
-        set({ stats });
+        const stats = await dbHelpers.getStats()
+        set({ stats })
       } catch (error) {
-        set({ error: (error as Error).message });
+        set({ error: (error as Error).message })
       }
     },
 
     loadRecentSessions: async () => {
       try {
-        const sessions = await dbHelpers.getWorkoutSessions(10);
-        set({ recentSessions: sessions });
+        const sessions = await dbHelpers.getWorkoutSessions(10)
+        set({ recentSessions: sessions })
       } catch (error) {
-        set({ error: (error as Error).message });
+        set({ error: (error as Error).message })
       }
     },
 
     // Workout plan management
     createWorkoutPlan: async (planData) => {
       try {
-        set({ isLoading: true, error: null });
-        await dbHelpers.createWorkoutPlan(planData);
-        await get().loadWorkoutPlans();
+        set({ isLoading: true, error: null })
+        await dbHelpers.createWorkoutPlan(planData)
+        await get().loadWorkoutPlans()
       } catch (error) {
-        set({ error: (error as Error).message, isLoading: false });
+        set({ error: (error as Error).message, isLoading: false })
       }
     },
 
     updateWorkoutPlan: async (id, updates) => {
       try {
-        await dbHelpers.updateWorkoutPlan(id, updates);
-        await get().loadWorkoutPlans();
+        await dbHelpers.updateWorkoutPlan(id, updates)
+        await get().loadWorkoutPlans()
       } catch (error) {
-        set({ error: (error as Error).message });
+        set({ error: (error as Error).message })
       }
     },
 
     deleteWorkoutPlan: async (id) => {
       try {
-        await dbHelpers.deleteWorkoutPlan(id);
-        await get().loadWorkoutPlans();
+        await dbHelpers.deleteWorkoutPlan(id)
+        await get().loadWorkoutPlans()
       } catch (error) {
-        set({ error: (error as Error).message });
+        set({ error: (error as Error).message })
       }
     },
 
     // Workout session management
     startWorkout: async (config) => {
       try {
-        const exercise: Exercise = {
+        const _exercise: Exercise = {
           id: crypto.randomUUID(),
           name: config.exercise,
           type: 'strength',
@@ -155,8 +161,8 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           reps: config.reps,
           weight: config.isBodyweight ? 0 : config.weight,
           restInterval: config.restTime,
-          notes: ''
-        };
+          notes: '',
+        }
 
         const session: WorkoutSession = {
           id: crypto.randomUUID(),
@@ -165,122 +171,122 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           exercises: [],
           duration: 0,
           notes: '',
-          completed: false
-        };
+          completed: false,
+        }
 
-        set({ 
+        set({
           currentSession: session,
           currentExerciseIndex: 0,
           currentSetIndex: 0,
           isRestMode: false,
-          workoutConfig: config
-        });
+          workoutConfig: config,
+        })
       } catch (error) {
-        set({ error: (error as Error).message });
+        set({ error: (error as Error).message })
       }
     },
 
     completeExercise: (exercise) => {
-      const { currentSession } = get();
-      if (!currentSession) return;
+      const { currentSession } = get()
+      if (!currentSession) return
 
       const updatedSession = {
         ...currentSession,
-        exercises: [...currentSession.exercises, exercise]
-      };
+        exercises: [...currentSession.exercises, exercise],
+      }
 
-      set({ currentSession: updatedSession });
+      set({ currentSession: updatedSession })
     },
 
     completeSet: () => {
-      const { currentSetIndex, workoutConfig, isRestMode } = get();
-      
+      const { currentSetIndex, workoutConfig, isRestMode: _isRestMode } = get()
+
       if (currentSetIndex < workoutConfig.sets - 1) {
-        set({ 
+        set({
           currentSetIndex: currentSetIndex + 1,
           isRestMode: true,
-          restTimeRemaining: workoutConfig.restTime
-        });
+          restTimeRemaining: workoutConfig.restTime,
+        })
       } else {
         // Exercise completed
-        get().finishWorkout();
+        get().finishWorkout()
       }
     },
 
     startRest: () => {
-      const { workoutConfig } = get();
-      set({ 
-        isRestMode: true, 
-        restTimeRemaining: workoutConfig.restTime 
-      });
+      const { workoutConfig } = get()
+      set({
+        isRestMode: true,
+        restTimeRemaining: workoutConfig.restTime,
+      })
     },
 
     skipRest: () => {
-      set({ 
-        isRestMode: false, 
-        restTimeRemaining: 0 
-      });
+      set({
+        isRestMode: false,
+        restTimeRemaining: 0,
+      })
     },
 
     extendRest: (seconds) => {
-      const { restTimeRemaining } = get();
-      set({ restTimeRemaining: restTimeRemaining + seconds });
+      const { restTimeRemaining } = get()
+      set({ restTimeRemaining: restTimeRemaining + seconds })
     },
 
     finishWorkout: async () => {
       try {
-        const { currentSession } = get();
-        if (!currentSession) return;
+        const { currentSession } = get()
+        if (!currentSession) return
 
         const completedSession = {
           ...currentSession,
           completed: true,
-          duration: Date.now() - currentSession.date.getTime()
-        };
+          duration: Date.now() - currentSession.date.getTime(),
+        }
 
-        await dbHelpers.createWorkoutSession(completedSession);
-        await get().loadStats();
-        await get().loadRecentSessions();
-        
-        set({ 
+        await dbHelpers.createWorkoutSession(completedSession)
+        await get().loadStats()
+        await get().loadRecentSessions()
+
+        set({
           currentSession: null,
           currentExerciseIndex: 0,
           currentSetIndex: 0,
           isRestMode: false,
-          restTimeRemaining: 0
-        });
+          restTimeRemaining: 0,
+        })
       } catch (error) {
-        set({ error: (error as Error).message });
+        set({ error: (error as Error).message })
       }
     },
 
     // Configuration
     updateWorkoutConfig: (config) => {
-      set({ 
-        workoutConfig: { 
-          ...get().workoutConfig, 
-          ...config 
-        } 
-      });
+      set({
+        workoutConfig: {
+          ...get().workoutConfig,
+          ...config,
+        },
+      })
     },
 
     // UI actions
     setError: (error) => set({ error }),
-    
+
     clearSession: () => {
-      set({ 
+      set({
         currentSession: null,
         currentExerciseIndex: 0,
         currentSetIndex: 0,
         isRestMode: false,
-        restTimeRemaining: 0
-      });
+        restTimeRemaining: 0,
+      })
     },
 
     // Settings
     clearAllData: async () => {
       try {
-        await dbHelpers.clearAllData();
+        await dbHelpers.clearAllData()
         set({
           workoutPlans: [],
           currentSession: null,
@@ -289,16 +295,16 @@ export const useWorkoutStore = create<WorkoutState & WorkoutActions>()(
           currentExerciseIndex: 0,
           currentSetIndex: 0,
           isRestMode: false,
-          restTimeRemaining: 0
-        });
+          restTimeRemaining: 0,
+        })
       } catch (error) {
-        set({ error: (error as Error).message });
+        set({ error: (error as Error).message })
       }
-    }
+    },
   }))
-);
+)
 
 // Auto-load data on store creation
-useWorkoutStore.getState().loadWorkoutPlans();
-useWorkoutStore.getState().loadStats();
-useWorkoutStore.getState().loadRecentSessions();
+useWorkoutStore.getState().loadWorkoutPlans()
+useWorkoutStore.getState().loadStats()
+useWorkoutStore.getState().loadRecentSessions()

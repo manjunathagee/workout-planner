@@ -1,27 +1,27 @@
-import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Plus, Clock, Dumbbell, Target, MoreVertical, Copy, Play, Edit } from 'lucide-react';
-import { useWorkoutStore } from '../store/workoutStore';
-import type { WorkoutPlan } from '../types';
+import { useState, useEffect } from 'react'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Plus, Clock, Dumbbell, Target, MoreVertical, Copy, Play, Edit } from 'lucide-react'
+import { useWorkoutStore } from '../store/workoutStore'
+import type { WorkoutPlan } from '../types'
 
 export const PlansTab = () => {
-  const { workoutPlans, createWorkoutPlan, loadWorkoutPlans, startWorkout } = useWorkoutStore();
-  const [isCreating, setIsCreating] = useState(false);
+  const { workoutPlans, createWorkoutPlan, loadWorkoutPlans, startWorkout } = useWorkoutStore()
+  const [isCreating, setIsCreating] = useState(false)
 
   useEffect(() => {
-    loadWorkoutPlans();
-  }, [loadWorkoutPlans]);
+    loadWorkoutPlans()
+  }, [loadWorkoutPlans])
 
   const handleCreateQuickPlan = async () => {
-    setIsCreating(true);
+    setIsCreating(true)
     try {
       // Randomly select between different plan types
-      const planTypes = ['strength', 'mobility', 'yoga'];
-      const selectedType = planTypes[Math.floor(Math.random() * planTypes.length)];
-      
-      let quickPlan: Omit<WorkoutPlan, 'id' | 'createdAt' | 'updatedAt'>;
-      
+      const planTypes = ['strength', 'mobility', 'yoga']
+      const selectedType = planTypes[Math.floor(Math.random() * planTypes.length)]
+
+      let quickPlan: Omit<WorkoutPlan, 'id' | 'createdAt' | 'updatedAt'>
+
       if (selectedType === 'mobility') {
         quickPlan = {
           name: 'Daily Mobility Routine',
@@ -37,7 +37,7 @@ export const PlansTab = () => {
               reps: 10,
               weight: 0,
               restInterval: 30,
-              notes: 'Slow controlled circles in both directions'
+              notes: 'Slow controlled circles in both directions',
             },
             {
               id: crypto.randomUUID(),
@@ -47,7 +47,7 @@ export const PlansTab = () => {
               reps: 15,
               weight: 0,
               restInterval: 30,
-              notes: 'Focus on spinal movement'
+              notes: 'Focus on spinal movement',
             },
             {
               id: crypto.randomUUID(),
@@ -57,18 +57,18 @@ export const PlansTab = () => {
               reps: 30,
               weight: 0,
               restInterval: 30,
-              notes: 'Hold for 30 seconds each side'
-            }
+              notes: 'Hold for 30 seconds each side',
+            },
           ],
           goals: [
             {
               id: crypto.randomUUID(),
               target: 30,
               achieved: 0,
-              type: 'duration'
-            }
-          ]
-        };
+              type: 'duration',
+            },
+          ],
+        }
       } else if (selectedType === 'yoga') {
         quickPlan = {
           name: 'Morning Yoga Flow',
@@ -84,7 +84,7 @@ export const PlansTab = () => {
               reps: 1,
               weight: 0,
               restInterval: 60,
-              notes: 'Flow through the complete sequence'
+              notes: 'Flow through the complete sequence',
             },
             {
               id: crypto.randomUUID(),
@@ -94,28 +94,28 @@ export const PlansTab = () => {
               reps: 1,
               weight: 0,
               restInterval: 30,
-              notes: 'Hold for 30 seconds each side'
+              notes: 'Hold for 30 seconds each side',
             },
             {
               id: crypto.randomUUID(),
-              name: 'Child\'s Pose',
+              name: "Child's Pose",
               type: 'yoga',
               sets: 1,
               reps: 1,
               weight: 0,
               restInterval: 0,
-              notes: 'Rest and breathe deeply'
-            }
+              notes: 'Rest and breathe deeply',
+            },
           ],
           goals: [
             {
               id: crypto.randomUUID(),
               target: 20,
               achieved: 0,
-              type: 'duration'
-            }
-          ]
-        };
+              type: 'duration',
+            },
+          ],
+        }
       } else {
         // Default strength plan
         quickPlan = {
@@ -132,7 +132,7 @@ export const PlansTab = () => {
               reps: 15,
               weight: 24,
               restInterval: 60,
-              notes: 'Focus on hip hinge movement'
+              notes: 'Focus on hip hinge movement',
             },
             {
               id: crypto.randomUUID(),
@@ -142,114 +142,118 @@ export const PlansTab = () => {
               reps: 5,
               weight: 16,
               restInterval: 90,
-              notes: 'Perform slowly with control'
-            }
+              notes: 'Perform slowly with control',
+            },
           ],
           goals: [
             {
               id: crypto.randomUUID(),
               target: 1000,
               achieved: 0,
-              type: 'weight'
-            }
-          ]
-        };
+              type: 'weight',
+            },
+          ],
+        }
       }
 
-      await createWorkoutPlan(quickPlan);
+      await createWorkoutPlan(quickPlan)
     } catch (error) {
-      console.error('Failed to create workout plan:', error);
+      console.error('Failed to create workout plan:', error)
     } finally {
-      setIsCreating(false);
+      setIsCreating(false)
     }
-  };
+  }
 
   const handleClonePlan = async (plan: WorkoutPlan) => {
-    setIsCreating(true);
+    setIsCreating(true)
     try {
       const clonedPlan: Omit<WorkoutPlan, 'id' | 'createdAt' | 'updatedAt'> = {
         name: `${plan.name} (Copy)`,
         description: plan.description,
         frequency: plan.frequency,
         timesPerWeek: plan.timesPerWeek,
-        exercises: plan.exercises.map(exercise => ({
+        exercises: plan.exercises.map((exercise) => ({
           ...exercise,
-          id: crypto.randomUUID() // New ID for cloned exercise
+          id: crypto.randomUUID(), // New ID for cloned exercise
         })),
-        goals: plan.goals.map(goal => ({
+        goals: plan.goals.map((goal) => ({
           ...goal,
           id: crypto.randomUUID(), // New ID for cloned goal
-          achieved: 0 // Reset progress
-        }))
-      };
+          achieved: 0, // Reset progress
+        })),
+      }
 
-      await createWorkoutPlan(clonedPlan);
+      await createWorkoutPlan(clonedPlan)
     } catch (error) {
-      console.error('Failed to clone workout plan:', error);
+      console.error('Failed to clone workout plan:', error)
     } finally {
-      setIsCreating(false);
+      setIsCreating(false)
     }
-  };
+  }
 
   const handleStartPlanWorkout = async (plan: WorkoutPlan) => {
     if (plan.exercises.length > 0) {
-      const firstExercise = plan.exercises[0];
-      const workoutConfig = {
-        exercise: firstExercise.name,
-        isBodyweight: firstExercise.weight === 0,
-        weight: firstExercise.weight,
-        reps: firstExercise.reps,
-        sets: firstExercise.sets,
-        restTime: firstExercise.restInterval
-      };
-      
-      await startWorkout(workoutConfig);
+      const firstExercise = plan.exercises[0]
+      if (firstExercise) {
+        const workoutConfig = {
+          exercise: firstExercise.name,
+          isBodyweight: firstExercise.weight === 0,
+          weight: firstExercise.weight,
+          reps: firstExercise.reps,
+          sets: firstExercise.sets,
+          restTime: firstExercise.restInterval,
+        }
+
+        await startWorkout(workoutConfig)
+      }
     }
-  };
+  }
 
   const formatFrequency = (frequency: string, timesPerWeek: number) => {
     switch (frequency) {
       case 'daily':
-        return 'Daily';
+        return 'Daily'
       case 'weekly':
-        return `${timesPerWeek}x per week`;
+        return `${timesPerWeek}x per week`
       case 'monthly':
-        return 'Monthly';
+        return 'Monthly'
       case 'quarterly':
-        return 'Quarterly';
+        return 'Quarterly'
       default:
-        return frequency;
+        return frequency
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold text-white">Workout Plans</h2>
-        <Button 
-          className="bg-orange-600 hover:bg-orange-700 text-white"
+        <Button
+          className="bg-orange-600 text-white hover:bg-orange-700"
           onClick={handleCreateQuickPlan}
           disabled={isCreating}
         >
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           {isCreating ? 'Creating...' : 'Create Plan'}
         </Button>
       </div>
 
       {/* Plans List */}
       {workoutPlans.length === 0 ? (
-        <Card className="bg-gray-800 border-gray-700 p-8 rounded-xl">
+        <Card className="rounded-xl border-gray-700 bg-gray-800 p-8">
           <div className="text-center text-gray-400">
-            <div className="text-4xl mb-4">💪</div>
-            <h3 className="text-lg font-medium mb-2">No workout plans yet</h3>
-            <p className="text-sm mb-4">Create your first workout plan to get started with your fitness journey.</p>
-            <Button 
-              className="bg-orange-600 hover:bg-orange-700 text-white"
+            <div className="mb-4 text-4xl">💪</div>
+            <h3 className="mb-2 text-lg font-medium">No workout plans yet</h3>
+            <p className="mb-4 text-sm">
+              Create your first workout plan to get started with your fitness journey.
+            </p>
+            <Button
+              className="bg-orange-600 text-white hover:bg-orange-700"
               onClick={handleCreateQuickPlan}
               disabled={isCreating}
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               {isCreating ? 'Creating...' : 'Create Your First Plan'}
             </Button>
           </div>
@@ -257,38 +261,41 @@ export const PlansTab = () => {
       ) : (
         <div className="grid gap-4">
           {workoutPlans.map((plan) => (
-            <Card key={plan.id} className="bg-gray-800 border-gray-700 p-6 rounded-xl hover:bg-gray-750 transition-colors">
-              <div className="flex justify-between items-start mb-4">
+            <Card
+              key={plan.id}
+              className="hover:bg-gray-750 rounded-xl border-gray-700 bg-gray-800 p-6 transition-colors"
+            >
+              <div className="mb-4 flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-white mb-2">{plan.name}</h3>
-                  <p className="text-gray-400 text-sm mb-3">{plan.description}</p>
-                  
+                  <h3 className="mb-2 text-xl font-semibold text-white">{plan.name}</h3>
+                  <p className="mb-3 text-sm text-gray-400">{plan.description}</p>
+
                   <div className="flex items-center gap-4 text-sm text-gray-400">
                     <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="h-4 w-4" />
                       {formatFrequency(plan.frequency, plan.timesPerWeek)}
                     </div>
                     <div className="flex items-center gap-1">
-                      <Dumbbell className="w-4 h-4" />
+                      <Dumbbell className="h-4 w-4" />
                       {plan.exercises.length} exercise{plan.exercises.length !== 1 ? 's' : ''}
                     </div>
                     <div className="flex items-center gap-1">
-                      <Target className="w-4 h-4" />
+                      <Target className="h-4 w-4" />
                       {plan.goals.length} goal{plan.goals.length !== 1 ? 's' : ''}
                     </div>
                   </div>
                 </div>
-                
+
                 <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                  <MoreVertical className="w-4 h-4" />
+                  <MoreVertical className="h-4 w-4" />
                 </Button>
               </div>
 
               {/* Exercise Preview */}
-              <div className="space-y-2 mb-4">
+              <div className="mb-4 space-y-2">
                 <h4 className="text-sm font-medium text-gray-300">Exercises:</h4>
                 {plan.exercises.slice(0, 3).map((exercise) => (
-                  <div key={exercise.id} className="flex justify-between items-center text-sm">
+                  <div key={exercise.id} className="flex items-center justify-between text-sm">
                     <span className="text-white">{exercise.name}</span>
                     <span className="text-gray-400">
                       {exercise.sets}x{exercise.reps} @ {exercise.weight}kg
@@ -296,34 +303,36 @@ export const PlansTab = () => {
                   </div>
                 ))}
                 {plan.exercises.length > 3 && (
-                  <p className="text-xs text-gray-500">+{plan.exercises.length - 3} more exercises</p>
+                  <p className="text-xs text-gray-500">
+                    +{plan.exercises.length - 3} more exercises
+                  </p>
                 )}
               </div>
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <Button 
-                  className="bg-orange-600 hover:bg-orange-700 text-white flex-1"
+                <Button
+                  className="flex-1 bg-orange-600 text-white hover:bg-orange-700"
                   onClick={() => handleStartPlanWorkout(plan)}
                 >
-                  <Play className="w-4 h-4 mr-1" />
+                  <Play className="mr-1 h-4 w-4" />
                   Start Workout
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="border-gray-600 text-gray-300 hover:bg-gray-700"
                   onClick={() => handleClonePlan(plan)}
                   disabled={isCreating}
                   title="Clone plan"
                 >
-                  <Copy className="w-4 h-4" />
+                  <Copy className="h-4 w-4" />
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="border-gray-600 text-gray-300 hover:bg-gray-700"
                   title="Edit plan"
                 >
-                  <Edit className="w-4 h-4" />
+                  <Edit className="h-4 w-4" />
                 </Button>
               </div>
             </Card>
@@ -331,5 +340,5 @@ export const PlansTab = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
